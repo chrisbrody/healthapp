@@ -8,7 +8,6 @@ const Navbar = () => {
     <nav className="flex">
       <div className="logo">
         <a href="/#">Health App</a>
-        
       </div>
       <ConnectWallet />
     </nav>

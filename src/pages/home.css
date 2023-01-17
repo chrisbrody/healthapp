@@ -1,3 +1,7 @@
-.home {
-    
+.home__wrapper {
+    padding: 1rem;
+}
+.btn {
+    background-color: lightgrey;
+    padding: 10px 20px;
 }
