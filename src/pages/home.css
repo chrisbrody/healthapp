@@ -1,6 +1,10 @@
 .home__wrapper {
     padding: 1rem;
 }
+.home__wrapper a {
+    padding: 10px;
+    text-decoration: underline;
+}
 .btn {
     background-color: lightgrey;
     padding: 10px 20px;

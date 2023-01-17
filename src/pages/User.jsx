@@ -32,7 +32,7 @@ const User = () => {
   const handleSubmit = async (e) => {
     console.log(userData, sleepData, e);
 
-    await createSleepDay(sleepData[3])
+    await createSleepDay(sleepData[5])
   }
 
   return (
