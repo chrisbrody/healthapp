@@ -12,7 +12,11 @@ const Home = () => {
       <a href='/'>Home</a>
       <a href='/user'>User</a>
       <a href='/coach'>Coach</a>
+
+      <a href='https://goerli.etherscan.io/address/0x753292b8C6A1c94A30a3bf940528274B769a8A47' target="_blank">EtherScan for Transactions</a>
     </div>
+
+    
   )
 }
 
