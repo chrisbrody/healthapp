@@ -1,0 +1,13 @@
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 1rem;
+}
+.logo {
+    background-color: lightgrey;
+    border-radius: 5%;
+    color: tomato;
+    padding: 1rem;
+}
