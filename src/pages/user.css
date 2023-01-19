@@ -1,0 +1,11 @@
+.user__wrapper {
+    padding: 1rem;
+}
+.user__wrapper a {
+    display: inline-block;
+    padding: 10px;
+    text-decoration: underline;
+} 
+.btn-get {
+    margin-top: 1rem;
+}

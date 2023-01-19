@@ -7,7 +7,7 @@ import './user.css'
 const User = () => {
   const [userData, setUserData] = useState(false) 
   const [sleepData, setSleepData] = useState(false) 
-  const { createSleepDay } = useStateContext()
+  const { address, createSleepDay } = useStateContext()
 
   const apiGetUserData = () => {
     fetch("https://api.ouraring.com/v1/userinfo?access_token=OJ2ON35XKCSTVUZEW3AMI5ERLD3Q4LKA")
@@ -32,16 +32,24 @@ const User = () => {
   const handleSubmit = async (e) => {
     console.log(userData, sleepData, e);
 
-    await createSleepDay(sleepData[5])
+    await createSleepDay(sleepData)
   }
 
   return (
     <div className='user__wrapper'>
-      <button className='btn btn-get' onClick={apiGetUserData}>Fetch API Data</button>
-      {!userData && <div>No user data yet, click Fetch Data to get some data</div>}
+      <div className=''>
+        <a href='/' className='pl-0'>Home</a>
+        {address && <a href='/user'>Submit Sleep Data</a>}
+        <br />
+        <a href='https://goerli.etherscan.io/address/0xfE7ac1624b1580FB8BD36991B8b1E5991610e798' target="_blank" className='pl-0'>EtherScan for Transactions</a>
+        <a href='https://thirdweb.com/goerli/0xfE7ac1624b1580FB8BD36991B8b1E5991610e798' target="_blank">Goerli Data</a>
+      </div>
+      
+      {address && <button className='btn btn-get' onClick={apiGetUserData}>Fetch API Data</button> }
+      {!userData && address && <div>No user data yet, click Fetch Data to get some data</div>}
       {
         userData && 
-        <div>
+        <div className='user__info'>
           <div className="email">Email: {userData.email}</div>
           <div className="age">Age: {userData.age}</div>
           <div className="gender">Gender: {userData.gender}</div>
@@ -50,10 +58,10 @@ const User = () => {
         </div>
       }
 
-      {!sleepData && <div>No Sleep Data</div>}
+      {!sleepData && address && <div>No Sleep Data</div>}
       { 
-        sleepData && 
-        <ul>
+        address && sleepData && 
+        <ul className='user__summary'>
           {sleepData.map((item) => (
             <div id={item.summary_date}>
               <li key={item.summary_date}>
