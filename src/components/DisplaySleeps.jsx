@@ -1,18 +1,30 @@
+import { useState } from 'react';
+import { useStateContext } from '../context';
+
 import './displaysleeps.css'
 
 const DisplaySleeps = (sleep) => {
-  console.log(sleep);
+  const [compare, setCompare] = useState(false)
+  const { address } = useStateContext();
+
+
+  console.log(sleep[0] === address);
+  // if(!(sleep[0] === address)) {
+  //   console.log('true');
+  //   setCompare('true')
+    
+  // }
 
   return (
     <div className='sleepDate__wrapper'>
       <div className="owner">Sleep Data Owner: {sleep.owner}</div>
-      <div className="sleepDate sleepDateSeven">
+      <div className="sleepDate sleepDateSeven" key={sleep.sleepDataSeven[0]}>
         <div className="date">Date: {sleep.sleepDataSeven[0]}</div>
         <div className="start">Start: {sleep.sleepDataSeven[1]}</div>
         <div className="end">End: {sleep.sleepDataSeven[2]}</div>
         <div className="duration">Sleep Duration: {sleep.sleepDataSeven[3]/60}m</div>
       </div>
-      <div className="sleepDate sleepDateSix">
+      <div className="sleepDate sleepDateSix" key={sleep.sleepDataSix[0]}>
         <div className="date">Date: {sleep.sleepDataSix[0]}</div>
         <div className="start">Start: {sleep.sleepDataSix[1]}</div>
         <div className="end">End: {sleep.sleepDataSix[2]}</div>

@@ -11,3 +11,11 @@ nav {
     color: tomato;
     padding: 1rem;
 }
+ul.nav {
+    display: flex;
+    flex-grow: 2;
+    justify-content: space-evenly;
+}
+ul.nav li {
+    cursor: pointer;
+}
