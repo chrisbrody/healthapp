@@ -49,6 +49,13 @@ const Coach = () => {
       
       {!isLoading && address && readiness && readiness.map((readiness) => <DisplayReadiness {...readiness} />) }
       
+      {!!sleeps && !!readiness &&
+        <div id="observation">
+          <h2>Observation Based On Client Data</h2>
+          <textarea className='textarea' rows="3" width="100%" />
+          <button className='btn'>Make Observation</button>
+        </div>
+      }
     </>
     
 

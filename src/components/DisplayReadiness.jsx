@@ -5,10 +5,9 @@ import './displayreadiness.css'
 const DisplayReadiness = (readiness) => {
   const { address } = useStateContext();
 
+  console.log(readiness, readiness[1][1]);
 
-  console.log(readiness.readinessDataOne[4]);
-
-  if(readiness[0] == address) {
+  if(readiness[0] == address || readiness[1][1] == '') {
     return 
   }
 

@@ -11,6 +11,17 @@
     padding-left: 1rem;
 }
 
+#observation {
+    width: 97%;
+    margin: 0 auto;
+}
+.textarea {
+    border: 1px solid black;
+    margin: 0.5rem 0rem;
+    padding: 10px;
+    width: 100%;
+}
+
 @media (max-width: 1500px) {
     .date__wrapper {
         display: grid;
