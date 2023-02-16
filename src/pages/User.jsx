@@ -28,7 +28,7 @@ const User = () => {
   // get and store current users data from Oura 
   useEffect(() => {
     apiGetUserData()
-  }, userData)
+  }, [])
 
   // get sleep data from Oura Ring
   const apiGetSleepData = () => {
@@ -46,14 +46,30 @@ const User = () => {
     fetch(`https://api.ouraring.com/v1/readiness?start=YYYY-MM-DD&end=YYYY-MM-DD&access_token=OJ2ON35XKCSTVUZEW3AMI5ERLD3Q4LKA`)
       .then((response) => response.json())
       .then((json) => {
-        console.log(json);
-        // setReadinessData(json);
+        console.log(json.readiness);
+        setReadinessData(json.readiness);
       });
   }
 
   // handle data submit 
   const handleSubmit = async (e) => {
     // console.log(userData, sleepData, e);
+    for (let i = 0; i <= 6; i++) {
+      console.log(i, !sleepData[i]);
+      // if no sleep data exists - add null values
+      if(!sleepData[i]) {
+          console.log(i);
+          sleepData[i] = {
+              "summary_date": "null",
+              "bedtime_start": "null",
+              "bedtime_end": "null",
+              "duration": "null"
+          }
+      }
+    }
+
+    // check sleep data is all good
+    console.log(sleepData);
 
     await createSleepDay(sleepData)
   }
@@ -89,24 +105,45 @@ const User = () => {
       }
       
       {!sleepData && address && <div>No Sleep Data</div>}
-      { 
-        address && sleepData && 
-        <ul className='user__summary'>
-          {sleepData.map((item) => (
-            <div id={item.summary_date}>
-              <li key={item.summary_date}>
-                {item.summary_date}
-                {item.bedtime_start}
-                {item.bedtime_end}
+      {sleepData && address && 
+        <>
+          <h2>Sleep Data</h2>
+          <ul className='user__summary'>
+            {sleepData.map((item) => (
+              <div key={item.summary_date} id={item.summary_date}>
+                <li>
+                  {item.summary_date}
+                  {item.bedtime_start}
+                  {item.bedtime_end}
+                </li>
+              </div>
+            ))}
+          </ul>
+        </>
+        
+      }
+
+    {!readinessData && address && <div>No Readiness Data</div>} 
+    {readinessData && address && 
+      <div>
+        <h2>Readiness Data</h2>
+        <ul className='readiness__summary'>
+          {readinessData.map((item) => (
+            <div key={item.summary_date} id={item.summary_date}>
+              <li>
+                <span>Date: {item.summary_date} </span>
+                <span>Score: {item.score} </span>
+                <span>Score Activity Balance: {item.score_activity_balance} </span>
+                <span>Score Sleep Balance: {item.score_sleep_balance} </span>
+                <span>Score Temperature: {item.score_temperature} </span>
               </li>
             </div>
           ))}
         </ul>
-      }
+      </div> 
+    }
 
-    {!readinessData && address && <div>No Readiness Data</div>}
-
-      { sleepData && userData && <button className='btn' onClick={handleSubmit}>Submit Data To Chain</button> }
+    { sleepData && userData && <button className='btn' onClick={handleSubmit}>Submit Data To Chain</button> }
     </div>
   )
 }
