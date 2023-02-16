@@ -7,6 +7,7 @@ import './user.css'
 const User = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [userData, setUserData] = useState(false) 
+  const [data, setData] = useState(false) 
   const [sleepData, setSleepData] = useState(false)   
   const [readinessData, setReadinessData] = useState(false)   
   const { address, createSleepDay, createReadinessDay } = useStateContext()
@@ -32,7 +33,7 @@ const User = () => {
 
   // get sleep data from Oura Ring
   const apiGetSleepData = () => {
-    fetch(`https://api.ouraring.com/v1/sleep?start=YYYY-MM-DD&end=YYYY-MM-DD&access_token=OJ2ON35XKCSTVUZEW3AMI5ERLD3Q4LKA`)
+    fetch(`https://api.ouraring.com/v1/sleep?start=2023-02-07&end=2023-02-14&access_token=OJ2ON35XKCSTVUZEW3AMI5ERLD3Q4LKA`)
       .then((response) => response.json())
       .then((json) => {
         console.log(json.sleep);
@@ -43,7 +44,7 @@ const User = () => {
 
   // get readiness data from Oura Ring
   const apiGetReadinessData = () => {
-    fetch(`https://api.ouraring.com/v1/readiness?start=YYYY-MM-DD&end=YYYY-MM-DD&access_token=OJ2ON35XKCSTVUZEW3AMI5ERLD3Q4LKA`)
+    fetch(`https://api.ouraring.com/v1/readiness?start=2023-02-07&end=2023-02-14&access_token=OJ2ON35XKCSTVUZEW3AMI5ERLD3Q4LKA`)
       .then((response) => response.json())
       .then((json) => {
         console.log(json.readiness);
@@ -59,18 +60,19 @@ const User = () => {
       if(!readinessData[i]) {
         console.log(i, !readinessData[i]);
         readinessData[i] = {
-            "summary_date": "null",
-            "score": "null",
-            "score_activity_balance": "null",
-            "score_sleep_balance": "null",
-            "score_temperature": "null"
+            "summary_date": "none",
+            "score": "none",
+            "score_activity_balance": "none",
+            "score_sleep_balance": "none",
+            "score_temperature": "none"
         }
       }
     }
 
     console.log(readinessData);
 
-    await createReadinessDay(readinessData)
+    let res = await createReadinessDay(readinessData)
+    console.log(res);
   }
 
   // handle data submit 
@@ -93,7 +95,8 @@ const User = () => {
     // check sleep data is all good
     console.log(sleepData);
 
-    await createSleepDay(sleepData)
+    let res = await createSleepDay(sleepData)
+    console.log(res);
   }
 
   return (
@@ -102,7 +105,7 @@ const User = () => {
       {address && <div className="home__wrapper user"> Wallet Address: {address}</div>}
       {!userData && address && <div className='pl-1'>No user data yet, click Fetch Data to get some data</div>}
       {
-        userData && 
+        userData && address &&
         <div className='user__info'>
           <div className="email">Email: {userData.email}</div>
           <div className="age">Age: {userData.age}</div>
@@ -118,7 +121,7 @@ const User = () => {
         <div>Loading...</div>
       } 
 
-      {/* Get Sleep Data */}
+      {/* Show Get Data Buttons if there is an address */}
       {address && 
         <div>
           <button className='btn btn-get' onClick={apiGetSleepData}>Get Sleep Data</button> 
@@ -126,47 +129,44 @@ const User = () => {
         </div>    
       }
       
-      {!sleepData && address && <div>No Sleep Data</div>}
+      {!sleepData && !readinessData && address && <div>No Data</div>}
       {sleepData && address && 
         <>
           <h2>Sleep Data</h2>
-          <ul className='user__summary'>
+          <div className='sleepDate__wrapper'>
             {sleepData.map((item) => (
-              <div key={item.summary_date} id={item.summary_date}>
-                <li>
-                  {item.summary_date}
-                  {item.bedtime_start}
-                  {item.bedtime_end}
-                </li>
-              </div>
+              <div key={item.summary_date} id={item.summary_date} className='sleepDate'>
+                  <div className='date'>Date: {item.summary_date}</div>
+                  <div className='start'>Start: {item.bedtime_start}</div>
+                  <div className='end'>End: {item.bedtime_end}</div>
+                  <div className='duration'>Sleep Duration: {item.duration/60}m</div>
+                </div>
             ))}
-          </ul>
+          </div>
         </>
         
       }
 
-    {!readinessData && address && <div>No Readiness Data</div>} 
+    
     {readinessData && address && 
       <div>
         <h2>Readiness Data</h2>
-        <ul className='readiness__summary'>
+        <div className='sleepDate__wrapper'>
           {readinessData.map((item) => (
-            <div key={item.summary_date} id={item.summary_date}>
-              <li>
-                <span>Date: {item.summary_date} </span>
-                <span>Score: {item.score} </span>
-                <span>Score Activity Balance: {item.score_activity_balance} </span>
-                <span>Score Sleep Balance: {item.score_sleep_balance} </span>
-                <span>Score Temperature: {item.score_temperature} </span>
-              </li>
+            <div key={item.summary_date} id={item.summary_date} className='sleepDate'>
+                <div>Date: {item.summary_date} </div>
+                <div>Score: {item.score} </div>
+                <div>Score Activity Balance: {item.score_activity_balance} </div>
+                <div>Score Sleep Balance: {item.score_sleep_balance} </div>
+                <div>Score Temperature: {item.score_temperature} </div>
             </div>
           ))}
-        </ul>
+        </div>
       </div> 
     }
 
     { sleepData && userData && <button className='btn' onClick={handleSubmit}>Submit Sleep Data</button> }
-    { readinessData && userData && <button className='btn' onClick={handleReadinessSubmit}>Submit Readiness Data </button> }
+    { readinessData && userData && <button className='btn' onClick={handleReadinessSubmit}>Submit Readiness Data</button> }
 
     </div>
   )

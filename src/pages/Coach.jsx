@@ -8,7 +8,7 @@ import './coach.css'
 const Coach = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [sleeps, setSleeps] = useState([])
-  const { address, contract, getSleepDays } = useStateContext();
+  const { address, contract, getSleepDays, getReadinessDays } = useStateContext();
 
   const fetchSleeps = async () => {
     setIsLoading(true)
