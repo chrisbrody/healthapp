@@ -33,32 +33,43 @@ const User = () => {
 
   // get sleep data from Oura Ring
   const apiGetSleepData = () => {
+    setIsLoading(true)
+
     fetch(`https://api.ouraring.com/v1/sleep?start=2023-02-07&end=2023-02-14&access_token=OJ2ON35XKCSTVUZEW3AMI5ERLD3Q4LKA`)
       .then((response) => response.json())
       .then((json) => {
         console.log(json.sleep);
         setSleepData(json.sleep);
-      });
-  }
+        setData(json.sleep)
+    });
 
+    setIsLoading(false)
+  }
 
   // get readiness data from Oura Ring
   const apiGetReadinessData = () => {
+    setIsLoading(true)
+
     fetch(`https://api.ouraring.com/v1/readiness?start=2023-02-07&end=2023-02-14&access_token=OJ2ON35XKCSTVUZEW3AMI5ERLD3Q4LKA`)
       .then((response) => response.json())
       .then((json) => {
         console.log(json.readiness);
         setReadinessData(json.readiness);
+        setData(json.readiness);
       });
+
+    setIsLoading(false)
   }
 
+  // handle readiness data submit
   const handleReadinessSubmit = async (e) => {
+    setIsLoading(true)
     // console.log(userData, readinessData, e);
 
     for (let i = 0; i <= 6; i++) {
       // if no sleep data exists - add null values
       if(!readinessData[i]) {
-        console.log(i, !readinessData[i]);
+        // console.log(i, !readinessData[i]);
         readinessData[i] = {
             "summary_date": "none",
             "score": "none",
@@ -69,17 +80,21 @@ const User = () => {
       }
     }
 
-    console.log(readinessData);
+    // console.log(readinessData);
 
     let res = await createReadinessDay(readinessData)
     console.log(res);
+
+    setIsLoading(false)
   }
 
   // handle data submit 
   const handleSubmit = async (e) => {
+    setIsLoading(true)
+
     // console.log(userData, sleepData, e);
     for (let i = 0; i <= 6; i++) {
-      console.log(i, !sleepData[i]);
+      // console.log(i, !sleepData[i]);
       // if no sleep data exists - add null values
       if(!sleepData[i]) {
           console.log(i);
@@ -93,10 +108,18 @@ const User = () => {
     }
 
     // check sleep data is all good
-    console.log(sleepData);
+    // console.log(sleepData);
 
     let res = await createSleepDay(sleepData)
     console.log(res);
+
+    setIsLoading(false)
+  }
+
+  const handleReset = () => {
+    setSleepData(false);
+    setReadinessData(false);
+    setData(false)
   }
 
   return (
@@ -116,20 +139,21 @@ const User = () => {
       }
       <br />
 
-      {/* Loading */}
-      {isLoading && 
+      {/* Initial Loading State */}
+      {isLoading && !data &&
         <div>Loading...</div>
       } 
 
       {/* Show Get Data Buttons if there is an address */}
-      {address && 
+      {address && !data &&
         <div>
           <button className='btn btn-get' onClick={apiGetSleepData}>Get Sleep Data</button> 
           <button className='btn btn-get' onClick={apiGetReadinessData}>Get Readiness Data</button>
         </div>    
       }
       
-      {!sleepData && !readinessData && address && <div>No Data</div>}
+      {!sleepData && !readinessData && !data && address ? <div>Select Data to Submit</div> : ""}
+      
       {sleepData && address && 
         <>
           <h2>Sleep Data</h2>
@@ -165,8 +189,19 @@ const User = () => {
       </div> 
     }
 
-    { sleepData && userData && <button className='btn' onClick={handleSubmit}>Submit Sleep Data</button> }
-    { readinessData && userData && <button className='btn' onClick={handleReadinessSubmit}>Submit Readiness Data</button> }
+    { sleepData && userData && 
+      <>
+        <button className='btn' onClick={handleSubmit}>{!isLoading ? 'Submit Sleep Data' : 'Submitting Data...'}</button>
+        {!isLoading ? <button className='btn' onClick={handleReset}>Reset Data</button> : ''}
+      </> 
+    }
+    { readinessData && userData &&
+      <>
+        <button className='btn' onClick={handleReadinessSubmit}>{!isLoading ? 'Submit Readiness Data' : 'Submitting Data...'}</button> 
+        {!isLoading ? <button className='btn' onClick={handleReset}>Reset Data</button> : ''}
+        
+      </> 
+    }
 
     </div>
   )
