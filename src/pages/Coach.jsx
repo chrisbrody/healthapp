@@ -26,7 +26,7 @@ const Coach = () => {
   return (
     <>
       {!address && <div className='no_wallet'><p>no wallet connected</p></div>}
-      {address && <div className="home__wrapper user"> Wallet Address: {address}</div>}
+      {address && <div className="page__wrapper user"> Wallet Address: {address}</div>}
 
       {!isLoading && sleeps.length === 0 && (
         <div>Loading client data</div>

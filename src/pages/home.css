@@ -1,7 +1,7 @@
-.home__wrapper {
+.page__wrapper {
     padding: 1rem;
 }
-.home__wrapper a {
+.page__wrapper a {
     display: inline-block;
     padding: 10px;
     text-decoration: underline;

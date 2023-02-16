@@ -1,25 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { useStateContext } from '../context';
 
 import './user.css'
 
 const User = () => {
+  const [isLoading, setIsLoading] = useState(false)
   const [userData, setUserData] = useState(false) 
   const [sleepData, setSleepData] = useState(false)   
   const { address, createSleepDay } = useStateContext()
 
-  const apiGetUserData = () => {
+  // get User data from Oura ring
+  const apiGetUserData = async () => {
+    setIsLoading(true)
+
     fetch("https://api.ouraring.com/v1/userinfo?access_token=OJ2ON35XKCSTVUZEW3AMI5ERLD3Q4LKA")
       .then((response) => response.json())
       .then((json) => {
         console.log(json);
         setUserData(json);
-      });
+    });
 
-      apiGetSleepData()
+    setIsLoading(false)
   }
 
+  useEffect(() => {
+    apiGetUserData()
+  }, userData)
+
+  // get sleep data from Oura Ring
   const apiGetSleepData = () => {
     fetch(`https://api.ouraring.com/v1/sleep?start=YYYY-MM-DD&end=YYYY-MM-DD&access_token=OJ2ON35XKCSTVUZEW3AMI5ERLD3Q4LKA`)
       .then((response) => response.json())
@@ -29,18 +38,20 @@ const User = () => {
       });
   }
 
+  // handle data submit 
   const handleSubmit = async (e) => {
-    console.log(userData, sleepData, e);
+    // console.log(userData, sleepData, e);
 
     await createSleepDay(sleepData)
   }
 
   return (
     <div className='user__wrapper'>
+      {address && 
+        <div>3 options to fetch data</div>
+      }
       {!address && <div className='no_wallet'><p>no wallet connected</p></div>}
       {address && <div className="home__wrapper user"> Wallet Address: {address}</div>}
-      <br />
-      {address && <button className='btn btn-get' onClick={apiGetUserData}>Fetch API Data</button> }
       {!userData && address && <div className='pl-1'>No user data yet, click Fetch Data to get some data</div>}
       {
         userData && 
@@ -52,7 +63,15 @@ const User = () => {
           <div className="weight">Weight: {userData.weight}</div>
         </div>
       }
+      <br />
 
+      {/* Loading */}
+      {isLoading && 
+        <div>Loading...</div>
+      }
+
+      {/* Get Sleep Data */}
+      {address && <button className='btn btn-get' onClick={apiGetSleepData}>Get Sleep Data</button> }
       {!sleepData && address && <div className='pl-1'>No Sleep Data</div>}
       { 
         address && sleepData && 

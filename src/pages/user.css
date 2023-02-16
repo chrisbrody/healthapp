@@ -1,5 +1,5 @@
 .user__wrapper {
-    padding: 0;
+    padding: 1rem;
 }
 .user__wrapper a {
     display: inline-block;
@@ -8,7 +8,6 @@
 } 
 .btn-get {
     margin-top: 1rem;
-    margin-left: 1rem;
 }
 .pl-1 {
     padding-left: 1rem;
