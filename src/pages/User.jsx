@@ -10,7 +10,9 @@ const User = () => {
   const [data, setData] = useState(false) 
   const [sleepData, setSleepData] = useState(false)   
   const [readinessData, setReadinessData] = useState(false)   
-  const { address, createSleepDay, createReadinessDay } = useStateContext()
+  const [observationData, setObservationData] = useState([])
+
+  const { address, contract, createSleepDay, createReadinessDay, getObservations } = useStateContext()
 
   // get User data from Oura ring
   const apiGetUserData = async () => {
@@ -26,10 +28,29 @@ const User = () => {
     setIsLoading(false)
   }
 
+  const fetchObservationData = async () => {
+    setIsLoading(true)
+
+    const data = await getObservations()
+    console.log(data[0]);
+    setObservationData(data[0])
+    console.log(data[0].clientAddress[0] == address, data.length);
+
+    observationData.forEach((item) => {
+      console.log(item);
+    })
+
+    setIsLoading(false)
+  }
+
   // get and store current users data from Oura 
   useEffect(() => {
     apiGetUserData()
   }, [])
+
+  useEffect(() => {
+    if(contract) fetchObservationData();
+  }, [address, contract])
 
   // get sleep data from Oura Ring
   const apiGetSleepData = () => {
@@ -116,6 +137,7 @@ const User = () => {
     setIsLoading(false)
   }
 
+  // handle reset data
   const handleReset = () => {
     setSleepData(false);
     setReadinessData(false);
@@ -124,11 +146,10 @@ const User = () => {
 
   return (
     <div className='user__wrapper'>
-      {!address && <div className='no_wallet'><p>no wallet connected</p></div>}
-      {address && <div className="home__wrapper user"> Wallet Address: {address}</div>}
-      {!userData && address && <div className='pl-1'>No user data yet, click Fetch Data to get some data</div>}
-      {
-        userData && address &&
+      {!address ? <div className='no_wallet'><p>no wallet connected</p></div> : <div className="home__wrapper user"> Wallet Address: {address}</div>}
+
+      {!userData ? 
+        <div className='pl-1'>No user data found.</div> : 
         <div className='user__info'>
           <div className="email">Email: {userData.email}</div>
           <div className="age">Age: {userData.age}</div>
@@ -137,7 +158,6 @@ const User = () => {
           <div className="weight">Weight: {userData.weight}</div>
         </div>
       }
-      <br />
 
       {/* Initial Loading State */}
       {isLoading && !data &&
@@ -145,15 +165,17 @@ const User = () => {
       } 
 
       {/* Show Get Data Buttons if there is an address */}
-      {address && !data &&
+      {address && !data && !isLoading &&
         <div>
           <button className='btn btn-get' onClick={apiGetSleepData}>Get Sleep Data</button> 
           <button className='btn btn-get' onClick={apiGetReadinessData}>Get Readiness Data</button>
         </div>    
       }
       
+      {/* No data has been selected yet */}
       {!sleepData && !readinessData && !data && address ? <div>Select Data to Submit</div> : ""}
       
+      {/* reveal sleep data when requested */}
       {sleepData && address && 
         <>
           <h2>Sleep Data</h2>
@@ -167,11 +189,15 @@ const User = () => {
                 </div>
             ))}
           </div>
+          {/* submit sleep data button */}
+          <button className='btn' onClick={handleSubmit}>{!isLoading ? 'Submit Sleep Data' : 'Submitting Data...'}</button>
+          {/* sleep data reset button */}
+          {!isLoading ? <button className='btn' onClick={handleReset}>Reset Data</button> : ''}
         </>
         
       }
 
-    
+    {/* reveal readiness data when requested */}
     {readinessData && address && 
       <div>
         <h2>Readiness Data</h2>
@@ -186,22 +212,38 @@ const User = () => {
             </div>
           ))}
         </div>
+        {/* submit readiness data button */}
+        <button className='btn' onClick={handleReadinessSubmit}>{!isLoading ? 'Submit Readiness Data' : 'Submitting Data...'}</button> 
+        {/* readiness data reset button */}
+        {!isLoading ? <button className='btn' onClick={handleReset}>Reset Data</button> : ''}
       </div> 
     }
 
-    { sleepData && userData && 
-      <>
-        <button className='btn' onClick={handleSubmit}>{!isLoading ? 'Submit Sleep Data' : 'Submitting Data...'}</button>
-        {!isLoading ? <button className='btn' onClick={handleReset}>Reset Data</button> : ''}
-      </> 
-    }
-    { readinessData && userData &&
-      <>
-        <button className='btn' onClick={handleReadinessSubmit}>{!isLoading ? 'Submit Readiness Data' : 'Submitting Data...'}</button> 
-        {!isLoading ? <button className='btn' onClick={handleReset}>Reset Data</button> : ''}
-        
-      </> 
-    }
+    {observationData && address && 
+      <div>
+        <br />
+        <hr />
+        <br />
+        <h2>Recent Observation Data made by {observationData.owner}</h2>
+        <div className=''>
+            <div key={observationData.clientAddress} id={observationData.clientAddress} className='observationDate'>
+              <div className="dateTime">Observation Period {observationData.dateTime}</div>
+              <div className="text">Observation: {observationData.observation}</div>
+            </div>
+        </div>
+      </div> 
+    } 
+
+    {/* {observationData ? 
+    <>
+      {observationData.map((item, index) => {
+        {item.clientAddress}
+      })}
+      <div>you have stuff</div>
+    </>
+
+      : <div>No Observations</div>
+    } */}
 
     </div>
   )

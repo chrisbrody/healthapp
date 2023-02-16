@@ -9,10 +9,12 @@ export const StateContextProvider = ({ children }) => {
     // const { contract } = useContract('0x753292b8C6A1c94A30a3bf940528274B769a8A47')
     // const { contract } = useContract('0x4004104af546bbfE5E8CEb027370A667F175610D')
     // const { contract } = useContract('0xCb2b7aaE1571789762699A1Ca740135A9308Cc12')
-    const { contract, isLoading, error } = useContract('0x578E6a74295C50F219E4e050A18f9F05670D4819')
+    // const { contract, isLoading, error } = useContract('0x578E6a74295C50F219E4e050A18f9F05670D4819')
+    const { contract, isLoading, error } = useContract('0xbcB2A22710688E1eE837D788e7c0E9feFAb0Ff35')
 
     const { mutateAsync: createSleepDay } = useContractWrite(contract, 'createSleepDay')
     const { mutateAsync: createReadinessDay } = useContractWrite(contract, 'createReadinessDay')
+    const { mutateAsync: createObservation } = useContractWrite(contract, 'createObservation')
 
     const address = useAddress();
 
@@ -143,10 +145,37 @@ export const StateContextProvider = ({ children }) => {
         }
     }
 
+    // get Readiness data 
     const getReadinessDays = async () => {
         const readinesss = await contract.call('getReadinessDays')
 
         return readinesss
+    }
+
+    // create Observation data 
+    const publishObservation = async (observationData) => {
+        console.log(contract, observationData);
+
+        try {
+            const data = await createObservation([
+                address,
+                [observationData.observationText],
+                [observationData.dateTime],
+                [observationData.dataOwner]
+            ])
+
+            console.log("contract call success", data);
+            return data;
+        } catch (error) {
+            console.log("contract call failure", error)
+        }
+    }
+
+    // get Observation data 
+    const getObservations = async () => {
+        const observations = await contract.call('getObservations')
+
+        return observations
     }
 
     return (
@@ -158,6 +187,8 @@ export const StateContextProvider = ({ children }) => {
                 getSleepDays,
                 createReadinessDay: publishReadinessDay,
                 getReadinessDays,
+                createObservation: publishObservation,
+                getObservations,
             }}
         >
             {children}
