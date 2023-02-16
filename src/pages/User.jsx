@@ -8,6 +8,7 @@ const User = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [userData, setUserData] = useState(false) 
   const [sleepData, setSleepData] = useState(false)   
+  const [readinessData, setReadinessData] = useState(false)   
   const { address, createSleepDay } = useStateContext()
 
   // get User data from Oura ring
@@ -24,6 +25,7 @@ const User = () => {
     setIsLoading(false)
   }
 
+  // get and store current users data from Oura 
   useEffect(() => {
     apiGetUserData()
   }, userData)
@@ -38,6 +40,17 @@ const User = () => {
       });
   }
 
+
+  // get readiness data from Oura Ring
+  const apiGetReadinessData = () => {
+    fetch(`https://api.ouraring.com/v1/readiness?start=YYYY-MM-DD&end=YYYY-MM-DD&access_token=OJ2ON35XKCSTVUZEW3AMI5ERLD3Q4LKA`)
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        // setReadinessData(json);
+      });
+  }
+
   // handle data submit 
   const handleSubmit = async (e) => {
     // console.log(userData, sleepData, e);
@@ -47,9 +60,6 @@ const User = () => {
 
   return (
     <div className='user__wrapper'>
-      {address && 
-        <div>3 options to fetch data</div>
-      }
       {!address && <div className='no_wallet'><p>no wallet connected</p></div>}
       {address && <div className="home__wrapper user"> Wallet Address: {address}</div>}
       {!userData && address && <div className='pl-1'>No user data yet, click Fetch Data to get some data</div>}
@@ -68,11 +78,17 @@ const User = () => {
       {/* Loading */}
       {isLoading && 
         <div>Loading...</div>
-      }
+      } 
 
       {/* Get Sleep Data */}
-      {address && <button className='btn btn-get' onClick={apiGetSleepData}>Get Sleep Data</button> }
-      {!sleepData && address && <div className='pl-1'>No Sleep Data</div>}
+      {address && 
+        <div>
+          <button className='btn btn-get' onClick={apiGetSleepData}>Get Sleep Data</button> 
+          <button className='btn btn-get' onClick={apiGetReadinessData}>Get Readiness Data</button>
+        </div>    
+      }
+      
+      {!sleepData && address && <div>No Sleep Data</div>}
       { 
         address && sleepData && 
         <ul className='user__summary'>
@@ -87,6 +103,8 @@ const User = () => {
           ))}
         </ul>
       }
+
+    {!readinessData && address && <div>No Readiness Data</div>}
 
       { sleepData && userData && <button className='btn' onClick={handleSubmit}>Submit Data To Chain</button> }
     </div>
