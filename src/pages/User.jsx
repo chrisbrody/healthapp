@@ -9,7 +9,7 @@ const User = () => {
   const [userData, setUserData] = useState(false) 
   const [sleepData, setSleepData] = useState(false)   
   const [readinessData, setReadinessData] = useState(false)   
-  const { address, createSleepDay } = useStateContext()
+  const { address, createSleepDay, createReadinessDay } = useStateContext()
 
   // get User data from Oura ring
   const apiGetUserData = async () => {
@@ -49,6 +49,28 @@ const User = () => {
         console.log(json.readiness);
         setReadinessData(json.readiness);
       });
+  }
+
+  const handleReadinessSubmit = async (e) => {
+    // console.log(userData, readinessData, e);
+
+    for (let i = 0; i <= 6; i++) {
+      // if no sleep data exists - add null values
+      if(!readinessData[i]) {
+        console.log(i, !readinessData[i]);
+        readinessData[i] = {
+            "summary_date": "null",
+            "score": "null",
+            "score_activity_balance": "null",
+            "score_sleep_balance": "null",
+            "score_temperature": "null"
+        }
+      }
+    }
+
+    console.log(readinessData);
+
+    await createReadinessDay(readinessData)
   }
 
   // handle data submit 
@@ -143,7 +165,9 @@ const User = () => {
       </div> 
     }
 
-    { sleepData && userData && <button className='btn' onClick={handleSubmit}>Submit Data To Chain</button> }
+    { sleepData && userData && <button className='btn' onClick={handleSubmit}>Submit Sleep Data</button> }
+    { readinessData && userData && <button className='btn' onClick={handleReadinessSubmit}>Submit Readiness Data </button> }
+
     </div>
   )
 }
