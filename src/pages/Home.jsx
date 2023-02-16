@@ -15,8 +15,8 @@ const Home = () => {
       {!address && <div className='no_wallet'><p>no wallet connected</p></div>}
       <div className='page__wrapper'>
         <br />
-        <a href='https://goerli.etherscan.io/address/0xfE7ac1624b1580FB8BD36991B8b1E5991610e798' target="_blank" className='pl-0'>EtherScan for Transactions</a>
-        <a href='https://thirdweb.com/goerli/0xfE7ac1624b1580FB8BD36991B8b1E5991610e798' target="_blank">Goerli Data</a>
+        <a href='https://goerli.etherscan.io/address/0xbcB2A22710688E1eE837D788e7c0E9feFAb0Ff35' target="_blank" className='pl-0'>EtherScan for Transactions</a>
+        <a href='https://thirdweb.com/goerli/0xbcB2A22710688E1eE837D788e7c0E9feFAb0Ff35' target="_blank">Goerli Data</a>
       </div>
     </>
     
