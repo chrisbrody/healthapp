@@ -1,8 +1,8 @@
-.sleepDate__wrapper {
+.date__wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 }
-.sleepDate {
+.date__box {
     border: 1px solid black;
     margin: 0.5rem 1rem;
     padding: 10px;
@@ -12,28 +12,28 @@
 }
 
 @media (max-width: 1500px) {
-    .sleepDate__wrapper {
+    .date__wrapper {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     }
 }
 
 @media (max-width: 1200px) {
-    .sleepDate__wrapper {
+    .date__wrapper {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr;
     }
 }
 
 @media (max-width: 900px) {
-    .sleepDate__wrapper {
+    .date__wrapper {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
     }
 }
 
 @media (max-width: 600px) {
-    .sleepDate__wrapper {
+    .date__wrapper {
         display: grid;
         grid-template-columns: 1fr 1fr;
     }

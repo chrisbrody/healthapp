@@ -9,14 +9,16 @@ export const StateContextProvider = ({ children }) => {
     // const { contract } = useContract('0x753292b8C6A1c94A30a3bf940528274B769a8A47')
     // const { contract } = useContract('0x4004104af546bbfE5E8CEb027370A667F175610D')
     // const { contract } = useContract('0xCb2b7aaE1571789762699A1Ca740135A9308Cc12')
-    const { contract } = useContract('0xfE7ac1624b1580FB8BD36991B8b1E5991610e798')
+    const { contract, isLoading, error } = useContract('0x578E6a74295C50F219E4e050A18f9F05670D4819')
 
     const { mutateAsync: createSleepDay } = useContractWrite(contract, 'createSleepDay')
+    const { mutateAsync: createReadinessDay } = useContractWrite(contract, 'createReadinessDay')
 
     const address = useAddress();
 
+    // create sleep data 
     const publishSleepDay = async (sleepData) => {
-        console.log(String(sleepData[6].duration));
+        console.log(sleepData);
         try {
             const data = await createSleepDay([
                 address,
@@ -65,15 +67,86 @@ export const StateContextProvider = ({ children }) => {
             ])
 
             console.log("contract call success", data);
+            return data;
         } catch (error) {
             console.log("contract call failure", error);
         }
     }
 
+    // get Sleep data
     const getSleepDays = async () => {
         const sleeps = await contract.call('getSleepDays')
 
         return sleeps
+    }
+
+    // create Readiness data 
+    const publishReadinessDay = async (readinessData) => {
+        console.log(contract, readinessData);
+        try {
+            const data = await createReadinessDay([
+                address,
+                [
+                    String(readinessData[6].summary_date),
+                    String(readinessData[6].score),
+                    String(readinessData[6].score_activity_balance),
+                    String(readinessData[6].score_sleep_balance),
+                    String(readinessData[6].score_temperature)
+                ],
+                [
+                    String(readinessData[5].summary_date),
+                    String(readinessData[5].score),
+                    String(readinessData[5].score_activity_balance),
+                    String(readinessData[5].score_sleep_balance),
+                    String(readinessData[5].score_temperature)
+                ],
+                [
+                    String(readinessData[4].summary_date),
+                    String(readinessData[4].score),
+                    String(readinessData[4].score_activity_balance),
+                    String(readinessData[4].score_sleep_balance),
+                    String(readinessData[4].score_temperature)
+                ],
+                [
+                    String(readinessData[3].summary_date),
+                    String(readinessData[3].score),
+                    String(readinessData[3].score_activity_balance),
+                    String(readinessData[3].score_sleep_balance),
+                    String(readinessData[3].score_temperature)
+                ],
+                [
+                    String(readinessData[2].summary_date),
+                    String(readinessData[2].score),
+                    String(readinessData[2].score_activity_balance),
+                    String(readinessData[2].score_sleep_balance),
+                    String(readinessData[2].score_temperature)
+                ],
+                [
+                    String(readinessData[1].summary_date),
+                    String(readinessData[1].score),
+                    String(readinessData[1].score_activity_balance),
+                    String(readinessData[1].score_sleep_balance),
+                    String(readinessData[1].score_temperature)
+                ],
+                [
+                    String(readinessData[0].summary_date),
+                    String(readinessData[0].score),
+                    String(readinessData[0].score_activity_balance),
+                    String(readinessData[0].score_sleep_balance),
+                    String(readinessData[0].score_temperature)
+                ]
+            ])
+            console.log("contract call success", data);
+            return data;
+        } catch (error) {
+            console.log("contract call failure", error)
+        }
+    }
+
+    const getReadinessDays = async () => {
+        const readinesss = await contract.call('getReadinessDays')
+
+        return readinesss
     }
 
     return (
@@ -82,7 +155,9 @@ export const StateContextProvider = ({ children }) => {
                 address,
                 contract,
                 createSleepDay: publishSleepDay,
-                getSleepDays
+                getSleepDays,
+                createReadinessDay: publishReadinessDay,
+                getReadinessDays,
             }}
         >
             {children}
